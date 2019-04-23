@@ -1,26 +1,25 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import '@atlaskit/css-reset';
+import { DragDropContext } from 'react-beautiful-dnd';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import Column from './Column';
+import initialData from './initialData';
+
+const App = () => {
+  const [data, setData] = useState(initialData);
+
+  return data.columnOrder.map(columnId => {
+    const column = data.columns[columnId];
+    const tasks = column.taskIds.map(taskId => data.tasks[taskId]);
+
+    const onDragEnd = () => {};
+
+    return (
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Column key={column.id} column={column} tasks={tasks} />;
+      </DragDropContext>
+    );
+  });
+};
 
 export default App;
