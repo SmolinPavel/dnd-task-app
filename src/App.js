@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import "@atlaskit/css-reset";
-import { DragDropContext } from "react-beautiful-dnd";
+import React, { useState } from 'react';
+import '@atlaskit/css-reset';
+import { DragDropContext } from 'react-beautiful-dnd';
 
-import Column from "./Column";
-import initialData from "./initialData";
+import Column from './Column';
+import initialData from './initialData';
 
 const App = () => {
   const [data, setData] = useState(initialData);
@@ -38,8 +38,24 @@ const App = () => {
       setData(newData);
     };
 
+    const onDragStart = () => {
+      document.body.style.color = 'orange';
+      document.body.style.transition = 'background-color 0.2s ease';
+    };
+
+    const onDragUpdate = update => {
+      const { destination } = update;
+      const opacity = destination
+        ? destination.index / Object.keys(data.tasks).length
+        : 0;
+        document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
+    };
+
     return (
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext
+        onDragEnd={onDragEnd}
+        onDragStart={onDragStart}
+        onDragUpdate={onDragUpdate}>
         <Column key={column.id} column={column} tasks={tasks} />
       </DragDropContext>
     );
