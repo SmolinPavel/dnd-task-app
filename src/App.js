@@ -40,7 +40,7 @@ const App = () => {
 
     return (
       <DragDropContext onDragEnd={onDragEnd}>
-        <Column key={column.id} column={column} tasks={tasks} />;
+        <Column key={column.id} column={column} tasks={tasks} />
       </DragDropContext>
     );
   });
