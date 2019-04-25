@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import styled from 'styled-components';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
@@ -18,31 +18,32 @@ const Title = styled.h3`
 `;
 const TaskList = styled.div`
   padding: 8px;
-  background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'inherit')};
+  background-color: ${props =>
+    props.isDraggingOver ? 'lightgrey' : 'inherit'};
   flex-grow: 1;
   min-height: 100px;
 `;
 
-const Column = ({
-  column: { id, title } = {},
-  index,
-  tasks
-}) => (
+const InnerList = memo(({ tasks }) => (
+  <>
+    {tasks.map((task, index) => (
+      <Task index={index} key={task.id} task={task} />
+    ))}
+  </>
+));
+
+const Column = ({ column: { id, title } = {}, index, tasks }) => (
   <Draggable draggableId={id} index={index}>
     {provided => (
       <Container {...provided.draggableProps} ref={provided.innerRef}>
         <Title {...provided.dragHandleProps}>{title}</Title>
-        <Droppable
-          droppableId={id}
-          type="tasks">
+        <Droppable droppableId={id} type='tasks'>
           {(provided, snapshot) => (
             <TaskList
               ref={provided.innerRef}
               {...provided.droppableProps}
               isDraggingOver={snapshot.isDraggingOver}>
-              {tasks.map((task, index) => (
-                <Task index={index} key={task.id} task={task} />
-              ))}
+              <InnerList tasks={tasks} />
               {provided.placeholder}
             </TaskList>
           )}
@@ -52,4 +53,4 @@ const Column = ({
   </Draggable>
 );
 
-export default Column;
+export default memo(Column);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import styled from 'styled-components';
 import '@atlaskit/css-reset';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
@@ -10,18 +10,28 @@ const Container = styled.div`
   display: flex;
 `;
 
+const InnerList = memo(({ data }) => (
+  <>
+    {data.columnOrder.map((columnId, columnIndex) => {
+      const column = data.columns[columnId];
+      const tasks = column.taskIds.map(taskId => data.tasks[taskId]);
+
+      return (
+        <Column
+          key={column.id}
+          column={column}
+          tasks={tasks}
+          index={columnIndex}
+        />
+      );
+    })}
+  </>
+));
+
 const App = () => {
   const [data, setData] = useState(initialData);
 
-  const onDragStart = start => {
-    const homeIndex = data.columnOrder.indexOf(start.source.droppableId);
-
-    setData({ ...data, homeIndex });
-  };
-
   const onDragEnd = ({ destination, draggableId, source, type }) => {
-    setData({ ...data, homeIndex: null });
-
     if (!destination) return;
     if (
       destination.droppableId === source.droppableId &&
@@ -87,23 +97,11 @@ const App = () => {
   };
 
   return (
-    <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+    <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId='all-columns' direction='horizontal' type='column'>
         {provided => (
           <Container {...provided.droppableProps} ref={provided.innerRef}>
-            {data.columnOrder.map((columnId, columnIndex) => {
-              const column = data.columns[columnId];
-              const tasks = column.taskIds.map(taskId => data.tasks[taskId]);
-
-              return (
-                <Column
-                  key={column.id}
-                  column={column}
-                  tasks={tasks}
-                  index={columnIndex}
-                />
-              );
-            })}
+            <InnerList data={data} />
             {provided.placeholder}
           </Container>
         )}
