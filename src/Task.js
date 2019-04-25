@@ -7,7 +7,8 @@ const Container = styled.div`
   padding: 8px;
   margin-bottom: 8px;
   border-radius: 2px;
-  background-color: ${props => (props.isDragging ? 'lightgreen' : 'white')};
+  background-color: ${props =>
+    props.isDragDisabled ? 'lightgrey' : props.isDragging ? 'lightgreen' : 'white'};
   display: flex;
 `;
 
@@ -19,18 +20,22 @@ const Handle = styled.div`
   margin-right: 8px;
 `;
 
-const Task = ({ index, task: { content, id } = {} }) => (
-  <Draggable draggableId={id} index={index}>
-    {(provided, snapshot) => (
-      <Container
-        {...provided.draggableProps}
-        ref={provided.innerRef}
-        isDragging={snapshot.isDragging}>
-        <Handle {...provided.dragHandleProps} />
-        {content}
-      </Container>
-    )}
-  </Draggable>
-);
+const Task = ({ index, task: { content, id } = {} }) => {
+  const isDragDisabled = id === 'task-1';
+  return (
+    <Draggable draggableId={id} index={index} isDragDisabled={isDragDisabled}>
+      {(provided, snapshot) => (
+        <Container
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          isDragging={snapshot.isDragging}
+          isDragDisabled={isDragDisabled}>
+          <Handle {...provided.dragHandleProps} />
+          {content}
+        </Container>
+      )}
+    </Draggable>
+  );
+};
 
 export default Task;

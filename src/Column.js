@@ -1,8 +1,8 @@
-import React from "react";
-import styled from "styled-components";
-import { Droppable } from "react-beautiful-dnd";
+import React from 'react';
+import styled from 'styled-components';
+import { Droppable } from 'react-beautiful-dnd';
 
-import Task from "./Task";
+import Task from './Task';
 
 const Container = styled.div`
   margin: 8px;
@@ -17,17 +17,20 @@ const Title = styled.h3`
 `;
 const TaskList = styled.div`
   padding: 8px;
-  background-color: ${props => (props.isDraggingOver ? "skyblue" : "white")};
+  background-color: ${props => (props.isDraggingOver ? 'skyblue' : 'white')};
   flex-grow: 1;
   min-height: 100px;
 `;
 
-const Column = ({ column: { id, title } = {}, tasks }) => (
+const Column = ({ column: { id, title } = {}, isDropDisabled, tasks }) => (
   <Container>
     <Title>{title}</Title>
-    <Droppable droppableId={id}>
+    <Droppable droppableId={id} type={id === 'column-3' ? 'done' : 'active'} isDropDisabled={isDropDisabled}>
       {(provided, snapshot) => (
-        <TaskList ref={provided.innerRef} {...provided.droppableProps} isDraggingOver={snapshot.isDraggingOver}>
+        <TaskList
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          isDraggingOver={snapshot.isDraggingOver}>
           {tasks.map((task, index) => (
             <Task index={index} key={task.id} task={task} />
           ))}
